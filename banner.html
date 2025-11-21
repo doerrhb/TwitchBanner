@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blade Runner Countdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000000;
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Using Michroma as a close approximation of the Blade Runner/high-tech corporate font */
+        @import url('https://fonts.googleapis.com/css2?family=Michroma&display=swap');
+
+        .banner {
+            width: 100vw;
+            height: 150px;
+            background: transparent; /* Changed to transparent */
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 25px;
+        }
+        
+        /* Animated Rain Effect Overlay */
+        .rain-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 1px,
+                rgba(255, 0, 0, 0.1) 2px,
+                transparent 3px
+            );
+            background-size: 50px 50px;
+            animation: rain 8s linear infinite;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        @keyframes rain {
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: 50px 50px;
+            }
+        }
+
+        .countdown-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            z-index: 2;
+            flex-shrink: 0;
+            background-color: rgba(0, 0, 0, 0.8); /* Black background only around clock */
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .countdown-label {
+            color: #ffffff;
+            font-size: 19.36px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            font-family: 'Michroma', sans-serif;
+            margin-bottom: 12px;
+        }
+
+        .countdown-timer {
+            display: flex;
+            gap: 15px;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-value {
+            font-family: 'Courier New', monospace;
+            font-size: 31.46px;
+            font-weight: bold;
+            color: #ff0000;
+            background-color: #200000;
+            padding: 5px 12px;
+            border-radius: 4px;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            min-width: 60px;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .time-label {
+            font-family: 'Michroma', sans-serif;
+            font-size: 13.31px;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255, 0, 0, 0.05) 0px,
+                transparent 3px,
+                transparent 5px,
+                rgba(255, 0, 0, 0.05) 7px
+            );
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <div class="rain-overlay"></div>
+        
+        <div class="countdown-section">
+            <div class="countdown-label">TIME UNTIL NEW YEAR 2027</div>
+            <div class="countdown-timer">
+                <div class="time-unit">
+                    <div class="time-value" id="days">000</div>
+                    <div class="time-label">DAYS</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="hours">00</div>
+                    <div class="time-label">HOURS</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="minutes">00</div>
+                    <div class="time-label">MINUTES</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="seconds">00</div>
+                    <div class="time-label">SECONDS</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glitch-overlay"></div>
+    </div>
+
+    <script>
+        // Set the date we're counting down to (New Year 2027)
+        const countDownDate = new Date("Jan 1, 2027 00:00:00").getTime();
+
+        // Update the countdown every 1 second
+        const countdownFunction = setInterval(function() {
+            // Get today's date and time
+            const now = new Date().getTime();
+            
+            // Find the distance between now and the countdown date
+            const distance = countDownDate - now;
+            
+            // Time calculations for days, hours, minutes and seconds
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Display the result
+            document.getElementById("days").innerHTML = days.toString().padStart(3, '0');
+            document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
+            
+            // If the countdown is over, display a message
+            if (distance < 0) {
+                clearInterval(countdownFunction);
+                document.getElementById("days").innerHTML = "000";
+                document.getElementById("hours").innerHTML = "00";
+                document.getElementById("minutes").innerHTML = "00";
+                document.getElementById("seconds").innerHTML = "00";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
