@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Config</title>
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h2 { margin-bottom: 20px; color: #efeff1; }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #333;
+            color: white;
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: #9147ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background-color: #772ce8; }
+        #status { margin-top: 15px; font-size: 14px; color: #00e6cb; height: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Set Countdown Target</h2>
+    <p>Pick the date and time you want to count down to:</p>
+    
+    <input type="datetime-local" id="targetDate">
+    <button onclick="saveConfig()">Save Configuration</button>
+    <div id="status"></div>
+
+    <script>
+        let twitchAuth;
+
+        // 1. Listen for Twitch Auth (Required to save settings)
+        window.Twitch.ext.onAuthorized(function(auth) {
+            twitchAuth = auth;
+        });
+
+        // 2. Check if a config already exists and fill the box
+        window.Twitch.ext.configuration.onChanged(function() {
+            if (window.Twitch.ext.configuration.broadcaster) {
+                try {
+                    var config = JSON.parse(window.Twitch.ext.configuration.broadcaster.content);
+                    if (config.date) {
+                        document.getElementById('targetDate').value = config.date;
+                    }
+                } catch (e) {
+                    console.log('Could not parse config');
+                }
+            }
+        });
+
+        // 3. Save Function
+        function saveConfig() {
+            const dateValue = document.getElementById('targetDate').value;
+            
+            if (!dateValue) {
+                document.getElementById('status').innerText = "⚠️ Please select a date first.";
+                document.getElementById('status').style.color = "orange";
+                return;
+            }
+
+            // Save to Twitch Configuration Service (Segment: broadcaster)
+            // We use version '1.0' as a standard string
+            window.Twitch.ext.configuration.set(
+                'broadcaster', 
+                '1.0', 
+                JSON.stringify({ date: dateValue })
+            );
+
+            document.getElementById('status').innerText = "✅ Saved! Viewers will see this shortly.";
+            document.getElementById('status').style.color = "#00e6cb";
+        }
+    </script>
+</body>
+</html>

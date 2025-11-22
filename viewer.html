@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Twitch Extension Helper (Required) -->
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <!-- Link to our separate timer script (Crucial for Twitch Security) -->
+    <script src="timer.js" defer></script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backlog Countdown</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Michroma&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .widget-container {
+            position: absolute;
+            top: 30px;    
+            right: 30px;  
+            width: 100%;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; 
+        }
+
+        .unified-box {
+            position: relative;
+            background-color: #000000;
+            padding: 8px;
+            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 0, 0, 0.3); 
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: auto;
+        }
+
+        .logo-debug {
+            display: none;
+            background-color: rgba(255, 255, 0, 0.9);
+            color: black;
+            padding: 5px;
+            font-family: sans-serif;
+            font-size: 11px;
+            text-align: center;
+            margin-bottom: 5px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        .countdown-timer {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            width: 100%;
+            padding-top: 4px;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-value {
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff0000;
+            background-color: #200000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            text-shadow: 0 0 10px #ff0000;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+            min-width: 35px;
+            text-align: center;
+            margin-bottom: 2px;
+        }
+
+        .time-label {
+            font-family: 'Michroma', sans-serif;
+            font-size: 8px;
+            color: #aaaaaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rain-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(255, 0, 0, 0.1) 2px, transparent 3px);
+            background-size: 50px 50px;
+            animation: rain 8s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.4;
+        }
+
+        @keyframes rain { from { background-position: 0 0; } to { background-position: 50px 50px; } }
+
+        .glitch-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(0deg, rgba(255, 0, 0, 0.05) 0px, transparent 2px, transparent 4px, rgba(255, 0, 0, 0.05) 6px);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .content-layer { 
+            position: relative; 
+            z-index: 3; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <div class="unified-box">
+            <div class="rain-overlay"></div>
+            <div class="glitch-overlay"></div>
+            
+            <div class="content-layer">
+                <div id="debug-msg" class="logo-debug">
+                    ⚠️ IMAGE MISSING
+                </div>
+
+                <img src="logo.jpg" 
+                     class="logo-img" 
+                     alt="Logo"
+                     onerror="this.style.display='none'; document.getElementById('debug-msg').style.display='block';">
+
+                <div class="countdown-timer">
+                    <div class="time-unit">
+                        <div class="time-value" id="days">000</div>
+                        <div class="time-label">DAYS</div>
+                    </div>
+                    <div class="time-unit">
+                        <div class="time-value" id="hours">00</div>
+                        <div class="time-label">HRS</div>
+                    </div>
+                    <div class="time-unit">
+                        <div class="time-value" id="minutes">00</div>
+                        <div class="time-label">MIN</div>
+                    </div>
+                    <div class="time-unit">
+                        <div class="time-value" id="seconds">00</div>
+                        <div class="time-label">SEC</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
