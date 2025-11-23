@@ -6,7 +6,7 @@
     <style>
         /* Dark Mode Theme for Twitch */
         body {
-            background-color: #0e0e10; /* Twitch Dark Background */
+            background-color: #0e0e10;
             color: #efeff1;
             font-family: 'Roobert', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             padding: 40px;
@@ -28,7 +28,7 @@
 
         h2 { margin-top: 0; color: #fff; text-align: center; }
         
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 25px; }
         
         label { 
             display: block; 
@@ -48,33 +48,11 @@
             border: 2px solid #2f2f35;
             background: #0e0e10;
             color: white;
-            box-sizing: border-box; /* Fixes padding width issues */
+            box-sizing: border-box;
             transition: border-color 0.2s;
         }
         
         input:focus { border-color: #9147ff; outline: none; }
-
-        .preview-box {
-            width: 100%;
-            height: 120px;
-            background: #000;
-            border: 2px dashed #2f2f35;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .preview-box img {
-            max-height: 100%;
-            max-width: 100%;
-            object-fit: contain;
-        }
-
-        .preview-text { color: #555; font-size: 12px; position: absolute; }
 
         button {
             width: 100%;
@@ -100,9 +78,15 @@
         .help-text {
             font-size: 12px;
             color: #adadb8;
-            margin-top: 5px;
-            line-height: 1.4;
+            margin-top: 8px;
+            line-height: 1.5;
+            background: #26262c;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #9147ff;
         }
+        
+        .help-text b { color: white; }
     </style>
 </head>
 <body>
@@ -117,19 +101,13 @@
 
         <!-- LOGO INPUT -->
         <div class="form-group">
-            <label for="logoUrl">Channel Logo URL</label>
-            <input type="text" id="logoUrl" 
-                   placeholder="https://static-cdn.jtvnw.net/..." 
-                   oninput="updatePreview()">
+            <label for="logoUrl">Custom Logo URL (Optional)</label>
+            <input type="text" id="logoUrl" placeholder="https://i.imgur.com/example.png">
             
             <div class="help-text">
-                Right-click your Twitch profile picture and select "Copy Image Link", then paste it here.
-            </div>
-
-            <!-- PREVIEW AREA -->
-            <div class="preview-box" id="previewContainer">
-                <span class="preview-text">Logo Preview</span>
-                <img id="imgPreview" src="" style="display:none;" onerror="handleError()">
+                <b>Recommended:</b> Upload your logo to <a href="https://imgur.com" target="_blank" style="color:#bf94ff">Imgur.com</a>. Right-click the uploaded image and select "Copy Image Address" (the link must end in .png or .jpg).
+                <br><br>
+                <b>Requirement:</b> You MUST add <code>i.imgur.com</code> to <b>Capabilities > Image Domains</b> in the Twitch Developer Console, or this image will be blocked.
             </div>
         </div>
 
@@ -151,38 +129,12 @@
                 try {
                     var config = JSON.parse(window.Twitch.ext.configuration.broadcaster.content);
                     if (config.date) document.getElementById('targetDate').value = config.date;
-                    if (config.logo) {
-                        document.getElementById('logoUrl').value = config.logo;
-                        updatePreview();
-                    }
+                    if (config.logo) document.getElementById('logoUrl').value = config.logo;
                 } catch (e) { console.log('Config Error'); }
             }
         });
 
-        // 3. PREVIEW LOGIC
-        function updatePreview() {
-            const url = document.getElementById('logoUrl').value;
-            const img = document.getElementById('imgPreview');
-            const txt = document.querySelector('.preview-text');
-
-            if (url) {
-                img.style.display = 'block';
-                img.src = url;
-                txt.style.display = 'none';
-            } else {
-                img.style.display = 'none';
-                txt.style.display = 'block';
-            }
-        }
-
-        function handleError() {
-            const img = document.getElementById('imgPreview');
-            img.style.display = 'none';
-            document.querySelector('.preview-text').innerText = "Invalid Image URL";
-            document.querySelector('.preview-text').style.display = 'block';
-        }
-
-        // 4. SAVE LOGIC
+        // 3. SAVE LOGIC
         function saveConfig() {
             const dateValue = document.getElementById('targetDate').value;
             const logoValue = document.getElementById('logoUrl').value;
@@ -190,6 +142,13 @@
             
             if (!dateValue) {
                 status.innerText = "⚠️ Please select a date.";
+                status.style.color = "#ff4f4d";
+                return;
+            }
+
+            // Basic URL validation
+            if (logoValue && !logoValue.startsWith("https://")) {
+                status.innerText = "⚠️ Logo URL must start with https://";
                 status.style.color = "#ff4f4d";
                 return;
             }
@@ -205,7 +164,7 @@
                 JSON.stringify(configData)
             );
 
-            status.innerText = "✅ Configuration Saved! Update your stream to see changes.";
+            status.innerText = "✅ Saved! You may need to refresh your stream.";
             status.style.color = "#00e6cb";
         }
     </script>
