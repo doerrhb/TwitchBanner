@@ -1,23 +1,32 @@
-// DEFAULT DATE: Jan 1, 2027 (Fallback if no config is set)
+// DEFAULT DATE: Jan 1, 2027
 let countDownDate = new Date("2027-01-01T00:00:00").getTime();
 
 // --- TWITCH CONFIGURATION LISTENER ---
 if (window.Twitch && window.Twitch.ext) {
-    // This runs automatically when the extension loads and finds saved data
     window.Twitch.ext.configuration.onChanged(function() {
         const configRef = window.Twitch.ext.configuration.broadcaster;
         
         if (configRef && configRef.content) {
             try {
-                // Parse the saved JSON data
                 const config = JSON.parse(configRef.content);
                 
+                // 1. Update Date
                 if (config.date) {
-                    console.log("New date received from config:", config.date);
                     countDownDate = new Date(config.date).getTime();
-                    // Force an immediate update so the user doesn't see the old time for 1 second
                     updateTimer(); 
                 }
+
+                // 2. Update Logo
+                const logoEl = document.getElementById('stream-logo');
+                if (logoEl) {
+                    if (config.logo && config.logo.trim() !== "") {
+                        logoEl.src = config.logo;
+                    } else {
+                        // Revert to default if user cleared the field
+                        logoEl.src = "logo.jpg";
+                    }
+                }
+
             } catch (e) {
                 console.error("Invalid configuration JSON");
             }
@@ -30,13 +39,11 @@ function updateTimer() {
     const now = new Date().getTime();
     const distance = countDownDate - now;
     
-    // Calculations
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
     
-    // Update DOM
     const dayEl = document.getElementById("days");
     const hourEl = document.getElementById("hours");
     const minEl = document.getElementById("minutes");
@@ -47,21 +54,18 @@ function updateTimer() {
     if (minEl) minEl.innerHTML = minutes.toString().padStart(2, '0');
     if (secEl) secEl.innerHTML = seconds.toString().padStart(2, '0');
     
-    // Check if finished
     if (distance < 0) {
         const timerBox = document.querySelector(".countdown-timer");
         if (timerBox) {
             timerBox.innerHTML = "<div style='color:red; font-weight:bold; font-family: sans-serif;'>TIME'S UP</div>";
         }
-        return false; // Stop loop
+        return false; 
     }
-    return true; // Continue loop
+    return true; 
 }
 
-// Run immediately
 updateTimer();
 
-// Run every second
 const timerInterval = setInterval(function() {
     const shouldContinue = updateTimer();
     if (!shouldContinue) {
@@ -69,7 +73,6 @@ const timerInterval = setInterval(function() {
     }
 }, 1000);
 
-// Twitch Authorization boilerplate
 if (window.Twitch && window.Twitch.ext) {
     window.Twitch.ext.onAuthorized(function(auth) {
         console.log('Twitch Extension Authorized');
