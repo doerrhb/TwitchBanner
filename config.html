@@ -1,172 +1,174 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Backlog Config</title>
+    <title>Countdown Timer Config</title>
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script src="config.js"></script>
     <style>
-        /* Dark Mode Theme for Twitch */
         body {
-            background-color: #0e0e10;
+            background: #0e0e10;
             color: #efeff1;
-            font-family: 'Roobert', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            box-sizing: border-box;
+            font-family: sans-serif;
+            padding: 20px;
+            margin: 0;
         }
         
-        .config-container {
-            background: #18181b;
-            padding: 30px;
-            border-radius: 8px;
-            width: 100%;
+        .container {
             max-width: 500px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            margin: 0 auto;
         }
-
-        h2 { margin-top: 0; color: #fff; text-align: center; }
         
-        .form-group { margin-bottom: 25px; }
+        h1 {
+            color: #9147ff;
+            text-align: center;
+        }
         
-        label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-weight: 600; 
-            color: #adadb8; 
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .input-group {
+            margin: 20px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #adadb8;
+            font-weight: bold;
         }
         
         input {
             width: 100%;
-            padding: 12px;
-            font-size: 14px;
-            border-radius: 4px;
+            padding: 10px;
+            background: #18181b;
             border: 2px solid #2f2f35;
-            background: #0e0e10;
             color: white;
+            border-radius: 4px;
             box-sizing: border-box;
-            transition: border-color 0.2s;
         }
         
-        input:focus { border-color: #9147ff; outline: none; }
-
+        input:focus {
+            border-color: #9147ff;
+            outline: none;
+        }
+        
         button {
             width: 100%;
-            background-color: #9147ff;
+            padding: 15px;
+            background: #9147ff;
             color: white;
             border: none;
-            padding: 14px;
-            font-size: 16px;
             border-radius: 4px;
-            cursor: pointer;
             font-weight: bold;
-            transition: background 0.2s;
+            cursor: pointer;
+            margin: 20px 0;
         }
-        button:hover { background-color: #772ce8; }
         
-        #status { 
-            margin-top: 15px; 
-            font-size: 14px; 
-            text-align: center; 
-            min-height: 20px;
+        button:hover {
+            background: #772ce8;
         }
-
-        .help-text {
-            font-size: 12px;
-            color: #adadb8;
-            margin-top: 8px;
-            line-height: 1.5;
-            background: #26262c;
+        
+        button:disabled {
+            background: #2f2f35;
+            cursor: not-allowed;
+        }
+        
+        #status {
+            text-align: center;
             padding: 10px;
+            margin: 10px 0;
             border-radius: 4px;
-            border-left: 3px solid #9147ff;
+            background: #1f1f23;
         }
         
-        .help-text b { color: white; }
+        .current-settings {
+            background: #18181b;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border: 1px solid #2f2f35;
+        }
+        
+        .current-settings h3 {
+            margin-top: 0;
+            color: #9147ff;
+        }
+        
+        .setting {
+            margin: 10px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #2f2f35;
+        }
+        
+        .setting:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-label {
+            color: #adadb8;
+            font-weight: bold;
+        }
+        
+        .setting-value {
+            color: #00e6cb;
+            word-break: break-all;
+        }
+        
+        .timestamp {
+            text-align: center;
+            color: #adadb8;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        .logo-preview {
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .logo-preview img {
+            max-width: 200px;
+            max-height: 100px;
+        }
     </style>
 </head>
 <body>
-    <div class="config-container">
-        <h2>Extension Settings</h2>
+    <div class="container">
+        <h1>Countdown Timer Configuration</h1>
         
-        <!-- DATE INPUT -->
-        <div class="form-group">
-            <label for="targetDate">Countdown Target Date</label>
+        <div class="input-group">
+            <label>Target Date & Time</label>
             <input type="datetime-local" id="targetDate">
         </div>
-
-        <!-- LOGO INPUT -->
-        <div class="form-group">
-            <label for="logoUrl">Custom Logo URL (Optional)</label>
-            <input type="text" id="logoUrl" placeholder="https://i.imgur.com/example.png">
+        
+        <div class="input-group">
+            <label>Logo URL (Optional)</label>
+            <input type="text" id="logoUrl" placeholder="https://example.com/logo.png">
             
-            <div class="help-text">
-                <b>Recommended:</b> Upload your logo to <a href="https://imgur.com" target="_blank" style="color:#bf94ff">Imgur.com</a>. Right-click the uploaded image and select "Copy Image Address" (the link must end in .png or .jpg).
-                <br><br>
-                <b>Requirement:</b> You MUST add <code>i.imgur.com</code> to <b>Capabilities > Image Domains</b> in the Twitch Developer Console, or this image will be blocked.
+            <div class="logo-preview">
+                <img id="logoPreview" style="display:none;">
+                <div id="noLogoPreview">No logo preview</div>
             </div>
         </div>
-
-        <button onclick="saveConfig()">Save & Publish</button>
-        <div id="status"></div>
+        
+        <button id="saveBtn">Save & Publish to Stream</button>
+        
+        <div id="status">Ready to configure</div>
+        
+        <div class="current-settings" id="currentSettings" style="display:none;">
+            <h3>Current Configuration</h3>
+            <div class="setting">
+                <div class="setting-label">Target Date:</div>
+                <div class="setting-value" id="currentDate">Not set</div>
+            </div>
+            <div class="setting">
+                <div class="setting-label">Logo URL:</div>
+                <div class="setting-value" id="currentLogo">Not set</div>
+            </div>
+            <div class="setting">
+                <div class="setting-label">Time Remaining:</div>
+                <div class="setting-value" id="timeRemaining">Not set</div>
+            </div>
+        </div>
+        
+        <div class="timestamp" id="lastSaved">Last saved: Never</div>
     </div>
-
-    <script>
-        let twitchAuth;
-
-        // 1. AUTHORIZE
-        window.Twitch.ext.onAuthorized(function(auth) {
-            twitchAuth = auth;
-        });
-
-        // 2. LOAD SETTINGS
-        window.Twitch.ext.configuration.onChanged(function() {
-            if (window.Twitch.ext.configuration.broadcaster) {
-                try {
-                    var config = JSON.parse(window.Twitch.ext.configuration.broadcaster.content);
-                    if (config.date) document.getElementById('targetDate').value = config.date;
-                    if (config.logo) document.getElementById('logoUrl').value = config.logo;
-                } catch (e) { console.log('Config Error'); }
-            }
-        });
-
-        // 3. SAVE LOGIC
-        function saveConfig() {
-            const dateValue = document.getElementById('targetDate').value;
-            const logoValue = document.getElementById('logoUrl').value;
-            const status = document.getElementById('status');
-            
-            if (!dateValue) {
-                status.innerText = "⚠️ Please select a date.";
-                status.style.color = "#ff4f4d";
-                return;
-            }
-
-            // Basic URL validation
-            if (logoValue && !logoValue.startsWith("https://")) {
-                status.innerText = "⚠️ Logo URL must start with https://";
-                status.style.color = "#ff4f4d";
-                return;
-            }
-
-            const configData = {
-                date: dateValue,
-                logo: logoValue
-            };
-
-            window.Twitch.ext.configuration.set(
-                'broadcaster', 
-                '1.0', 
-                JSON.stringify(configData)
-            );
-
-            status.innerText = "✅ Saved! You may need to refresh your stream.";
-            status.style.color = "#00e6cb";
-        }
-    </script>
 </body>
 </html>
